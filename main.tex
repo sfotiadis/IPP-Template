@@ -9,7 +9,14 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{svg}
-% \usepackage{amsmath}
+\usepackage{amsmath}
+
+\usepackage{titlesec}
+
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
 
 % Add local fullpage and head macros
 \usepackage{head,fullpage}     
@@ -50,8 +57,13 @@
   \end{oldthebibliography}
 }
 
+% \patchcmd{\thebibliography}
+%   {\settowidth}
+%   {\setlength{\itemsep}{0pt plus 0.0pt}\settowidth}
+%   {}{}
+
 \newcommand{\examnumber}{s1680171}
-\newcommand{\field}{Learning a physic-inspired deep representation of wave propagation in shallow water}
+\newcommand{\field}{Predicting wave propagation on shallow water using physics-inspired representation learning}
 \newcommand{\tutor}{James Garforth}
 \newcommand{\supervisor}{Amos Storkey}
 
@@ -70,6 +82,7 @@
 \vspace*{2cm}
 \begin{center}
         \Large\bf Informatics Project Proposal \\
+        \vspace*{1cm}
         \Large\bf \field
 \end{center}
 \vspace*{1.5cm}
@@ -77,17 +90,17 @@
         \bf \examnumber\\
         \monthyeardate\today
 \end{center}
-\vspace*{5mm}
+\vspace*{4mm}
 
 %
 %                       Insert your abstract HERE
 %                       
 \begin{abstract}
-  Wave propagation is an important problem from both a theoretical and practical point of view because it is key to many fields of science and engineering. The current numerical solvers are slow and cannot be used in iterative design work-flows. In recent years various deep learning methods have been used to produce fast approximations. This work compares generic architectures and methods specialized on fluid flow on grounds of accuracy, speed and ability to predict other physical systems hoping to provide a systematic assessment that is lacking as of now. Furthermore, we propose a new architecture that stands between generic and specialized methods, inspired by a Hamiltonian formulation for conservative systems. Learning efficiently such a representation will allow faster solutions and also provide us with insights on how learning algorithms encapsulate physical dynamics in a wide range of physical systems. 
+  Wave propagation is an important problem from both a theoretical and practical point of view because it is key to many fields of science and engineering. The current numerical solvers are slow and cannot be used in iterative design work-flows. In recent years various deep learning methods have been used to produce fast approximations but a systematic assessment is lacking as of now. This work intends to fill this gap by comparing generic frame prediction architectures to methods specialized on fluid flow in terms of accuracy, speed and generalization to other physical systems. Furthermore, we propose a new architecture that stands between generic and specialized methods, inspired by a \textcolor{red}{Hamiltonian} formulation for conservative systems aiming to provide further insights on how learning algorithms encapsulate the dynamics in physical systems. 
 \end{abstract}
 
-\vspace*{1cm}
-\vspace*{3cm}
+\vspace*{0cm}
+\vspace*{2cm}
 Date: \today
 \vfill
 {\bf Tutor:} \tutor\\
@@ -141,12 +154,12 @@ Date: \today
 % \frac{\partial v}{\partial t} &+ u\frac{\partial v}{\partial x} + v\frac{\partial v}{\partial y} + f u = -g \frac{\partial h}
 % {\partial y} - b v + \nu \left( \frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial y^2} \right),
 % $$
-\vskip -2mm
+% \vskip -2mm
 \subsection{Problem Statement}
-\vskip -2mm
-Physical processes are phenomena characterized by gradual changes during a succession of states. Modelling those phenomena in a principled way is one of the main goals of scientific endeavour because it allows us to understand the world and also predict it. Fluid flow is a physical process of such importance that the Clay Mathematics Institute includes the Navier-Stokes(N-S) equations that govern fluid flow on the list of Millenium Problems with one million dollars prize \cite{clay}. Besides, fluid flow is found in numerous industrial applications in aerodynamics, mechanical design, bioengineering, climate modelling and computer graphics among others \cite{thuerey2018well}. Analytical solutions to the N-S equation are only available in trivial cases and numerical methods like Computational Fluid Dynamics (CFD) can provide accurate approximations but come at a high computational cost \cite{ferziger2012computationalcfd}. During a system design process, iteration speed is very important and faster albeit less accurate approximations are highly desirable. 
+% \vskip -2mm
+Physical processes are characterized by gradual changes during a succession of states. Modelling such phenomena in a principled way is one of the main goals of scientific endeavour because it allows us to understand the world and predict it. Fluid flow is a physical process governed by the Navier-Stokes(N-S) equations and is found in numerous industrial applications in aerodynamics, mechanical design, bioengineering, climate modelling and computer graphics among others \cite{thuerey2018well}. N-S equations are of such importance that the Clay Mathematics Institute includes them on its Millenium Problems list, which entails a million dollars prize \cite{clay}. Analytical solutions to the N-S equation are only available in trivial cases. Instead, numerical methods like Computational Fluid Dynamics (CFD) can provide accurate approximations but come at a high computational cost \cite{ferziger2012computationalcfd}. During the process of designing a system, iteration speed is very important and faster albeit less accurate approximations are highly desirable. 
 
-Deep learning(DL) techniques have been found able to capture efficient representations in many problems such as object detection, speech synthesis and machine translation among others \cite{lecun2015deep}. The question rises if such techniques can learn representations in physical systems such as to provide high-quality predictions with a low computational burden. This project focuses on using DL to approximate fluid flow in shallow water where there is no vertical velocity. The evolution of such a system is equivalent to wave propagation and can be seen in Figure \ref{fig:evol}. Predicting such a problem can pave the way for approximating more complex processes. 
+Deep learning(DL) techniques have been found able to capture efficient representations in many problems such as object detection, speech synthesis and machine translation among others \cite{lecun2015deep}. The question rises if such techniques can learn representations in physical systems such as to provide high-quality predictions with a low computational burden. This project focuses on using DL to approximate fluid flow in shallow water where there is no vertical velocity. The evolution of such a system is equivalent to wave propagation as it can be seen in Figure \ref{fig:evol}. Predicting such a problem can pave the way for approximating more complex processes. 
 
 
 % \textbf{Its incompressible form is given by ∂u/∂t + u · ∇u = −1/ρ∇p + ν∇2u + g , ∇ · u = 0, where the most important quantities are flow velocity u and pressure p. The other parameters ρ, ν, g denote density, kinematic viscosity and external forces, respectively.}\textbf{The Navier-Stokes equations govern the motion of fluids and can be seen as Newton's second law of motion for fluids. The Navier-Stokes equations represent the conservation of momentum, while the continuity equation represents the conservation of mass. no viscocity gives euler equations}
@@ -201,64 +214,70 @@ Deep learning(DL) techniques have been found able to capture efficient represent
 
 % \textbf{Navier–Stokes (N-S) equations need to be solved in the simulation process. Because N-S equations are nonlinear partial differential equations, many numeri- cal simulation methods, such as Lagrangian methods [1] and Eulerian methods [2,3], are used to discretize them. In the field of high-resolution fluid simulation, Eulerian methods are widely used because they are more accurate in reconstructing and rendering surface.}
 
-Simulation methods for fluid flow are divided into two broad categories:  Eulerian methods which try to predict the velocity and pressure fields over a discrete mesh and Langragian methods take into account the properties and interactions between the individual objects \cite{zhang2007comparison}. The emerging DL approximation techniques are also characterized by the same dichotomy but their qualitative and quantitative differences have not been studied extensively. It is unclear what their representations actually capture: their understanding of the process can only be measured by their predictive power. While there are success stories denoting their efficacy \cite{tompson2017accelerating} the numerical simulation community remains skeptical towards deep learning techniques due to their black box nature. At the same time performance, comparisons are scarce. The problem is that fluid flow has way too many applications and this has led to a very segmented field and a lack of commonly used datasets that would enable comparisons. The first objective of this work is to compare DL techniques specifically designed of fluid flow approximation to generic video prediction methods on the same 2-d wave propagation dataset and assess their strengths and weaknesses.
+Simulation methods for fluid flow are divided into two broad categories:  \textbf{Eulerian methods} which predict the velocity and pressure fields over a discrete mesh and \textbf{Langragian methods} that take into account the properties and interactions between the individual objects \cite{zhang2007comparison}. The emerging DL approximation techniques are also characterized by the same dichotomy but their qualitative and quantitative differences have not been studied extensively. It is unclear what their representations actually capture, their understanding of the process can only be measured by their predictive power. While there are success stories denoting their efficacy \cite{tompson2017accelerating} the numerical simulation community remains skeptical towards DL techniques due to their black box nature. At the same time, performance comparisons are scarce because fluid flow has too many applications and this has led to a very segmented field and a lack of commonly used datasets that would enable fair comparisons. The \textit{first objective} of this work is to compare DL techniques specifically designed for fluid flow approximation against generic video prediction methods on the same 2-d wave propagation dataset and assess their strengths and weaknesses.
 
-We expect that specialized architectures due to bigger induction bias will perform better than generic ones but also be less transferable to other problems. Our hypothesis is that in this performance-generalization trade-off there can be found a hybrid approach which takes into account a narrow set of assumption, applicable to a wider range of physical problems. Particularly we plan to induce a physical prior based on the law of conservation of energy which describes a multitude of physical systems which if proven successful would have many applications in a wide range of fields. This is a novel approach to the best of our knowledge.
+We expect that specialized architectures due to higher induction bias will perform better than generic ones but also be less transferable to other problems. Our \textit{hypothesis} is that in this performance-generalization trade-off it is possible to find a hybrid approach that takes into account a narrow set of assumptions and is applicable to a wider range of physical problems. Particularly, we plan to induce a physical prior based on the law of conservation of energy which describes a multitude of physical systems. This is, to the best of our knowledge, a novel approach that if proven successful could find applications in a wide range of fields. 
 
-This work does not aim to provide a substitute for numerical solutions of fluid flow in cases where very high accuracy is essential.
+The scope of this works is fast approximations of fluid flow, it does not aim to provide a substitute for numerical solutions in cases where very high accuracy is essential.
 
 \subsection{Timeliness and Novelty}
-\vskip -2mm
+% \vskip -2mm
 
- Recent years saw a lot of advances with the appearance of specialized GPU hardware and the parallelization of learning algorithms. This led to the resurgence of machine learning and specifically of DL which proved to be successful in many areas \cite{lecun2015deep}. The application of DL is only increasing with time as more fields adopt the new tool-sets to solve previously intractable problems. Machine learning has a long been used in CFD to aid with simulations \cite{ferziger2012computationalcfd}. The aforementioned advances can provide more accurate and fast approximations of physical phenomena in general and CFD simulations in particular. The application of DL in CFD is in its nascent phase but is growing rapidly. At this point shedding more light to how the current approaches compare will provide the consolidation that is fundamental for the advancement of any field in this phase. Furthermore, the proposed hybrid method aims to bridge the gap between current approaches and open the way for applications in a much wider spectrum of problems.
+ Recent years saw a lot of technological advances with the appearance of specialized GPU hardware and the parallelization of learning algorithms. This led to the resurgence of machine learning and specifically of DL which proved to be successful in many areas \cite{lecun2015deep}. The application of DL is only increasing with time as more fields adopt the new tool-sets to solve previously intractable problems. Machine learning has a long been used in CFD to aid with simulations \cite{ferziger2012computationalcfd}. The aforementioned advances can provide more accurate and fast approximations of physical phenomena in general and CFD simulations in particular. The application of DL in CFD is in its nascent phase but is growing rapidly. At this point shedding more light to how the current approaches compare will provide the consolidation that is fundamental for the advancement of any field in this stage. Furthermore, the proposed hybrid method aims to bridge the gap between current approaches and open the way for applications in a much wider spectrum of problems.
 
 \subsection{Significance and beneficiaries}
 
 % Navier-Stokes equations describe many phenomena of scientific and engineering interest. They are used to model ocean currents, predict the weather, design cars and aircrafts, explain flow in blood vessels, describe the dissipation of pollutants to name just a few applications. There are many domains where a trade-off between speed and accuracy can be highly desirable. For example, during an iterative design work-flow, fast and accurate enough approximations can drastically reduce the time and cost needed for each iteration. In medicine, having a faster prediction of surgery outcomes would enable better pre-operational planning. 
 
-Overall this project will help both scientists and engineering that use CFD to better understand the advantages and limitations of current DL approximation methods. There are many applications where speed is more important than approximation accuracy. For example in iterative design work-flows, it can drastically reduce time and costs. In medicine, having a faster prediction of blood flow would enable better pre-operational planning.
+Overall this project will help both scientists and engineers to better understand the advantages and limitations of current DL fluid flow approximation methods. There are many applications where speed is more important than approximation accuracy. For example in iterative design work-flows, it can drastically reduce time and costs. In medicine, having a faster prediction of blood flow would enable better pre-operational planning. Furthermore, if our novel hybrid approach is proven successful this will illustrate how physics inspired methods can maintain a high level of explainability and also be practically applied. Since our assumptions are very generic, the method will be useful for the understanding of many other physical systems beyond fluid flow simulations. 
 
-Furthermore, if our novel hybrid approach is proven successful this will illustrate that physically inspired methods can maintain a high level of explainability and also be practically applied. Since our assumptions are very generic, the method will be useful for the understanding of many other physical systems beyond fluid flow simulations. 
-
-Our results will be presented to the scientific community through the final thesis. We are also in collaboration with groups from other Universities that are already working on the problem. All the code base developed during this project will become available to the community as open source.
+Our results will be presented to the scientific community through the final thesis and further dissemination by participating in conferences will be pursued. We are also in collaboration with groups from other Universities that are already working on the problem \cite{sorteberg2018approximating}. All the code developed during this project will become available to the community as open source.
 
 \subsection{Feasibility}
-\vskip -2mm
+% \vskip -2mm
 
 Implementing and evaluating the baselines and the proposed method can be a slow process. Specifically, training can take long so we plan to run a feasibility study in order to understand how much model tweaking and development would be reasonable to do given our resources. See also relevant discussion in Section \ref{sec:3risk}. 
 
+\vskip -6mm
 \section{Background}\label{sec:2background}
-\vskip -2mm
+% \vskip -2mm
 Predicting the evolution of physical systems through machine learning became a fast-growing field with the advent of the deep learning era. As in traditional fluid flow simulations, DL techniques divided into two main categories Eulerian and Langragian \cite{zhang2007comparison}.
 
- From the point of view of machine learning, Langragian approaches can be thought of as either generic frame prediction or object modelling as for example in intuitive physics. In the latter case, convolution-based neural networks with compositional structure can capture pairwise interactions of rigid objects and have been used to predict the object movements in videos \cite{watters2017visualvin}. Graph networks extend this idea to control deformable objects consisting of nodes \cite{battaglia2018relationalgn}. In fluid dynamics, the Smoothed Particle Hydrodynamics (SPH) method approximates the N-S equations using a particle-based formulation of advection. Modelling so many particles is hard for current deep learning architectures, instead, regression forests and hand-crafted features have been used to predict the velocity of each particle in the next time-step and speed-up the simulation \cite{jeong2015dataladickyforest}. 
+ From the point of view of machine learning, Langragian approaches can be thought of as either generic frame prediction or object-centric approaches as for example in intuitive physics. In the latter case, convolution-based neural networks with compositional structure can capture pairwise interactions of rigid objects and have been used to predict object movements in videos \cite{watters2017visualvin}. Graph networks extend this idea to control deformable objects consisting of nodes \cite{battaglia2018relationalgn}. In fluid dynamics, the Smoothed Particle Hydrodynamics (SPH) method approximates the N-S equations using a particle-based formulation of advection. Modelling so many particles is hard for current DL architectures, regression forests and hand-crafted features have been used to predict the velocity of each particle in the next time-step and speed-up the simulation \cite{jeong2015dataladickyforest}. 
  
- Langragian approaches in computer vision are equivalent to frame prediction where the goal shifts to modelling the dynamics behind image changes and not focusing on particular objects. Estimating the optical flow field is part of many methods and relies on the assumption that surfaces are continuous over time and so the intensity of a surface remains unchanged even if its position has shifted. Deep Learning models have been used for estimating the optical flow between two frames.  FlowNet, for example, uses an autoregressive Convolutional-Deconvolutional NN (CDNN) pretrained on synthetic data to make real video prediction \cite{fischer2015flownet} but optical flow can also be estimated in an unsupervised way \cite{jason2016back}, using a CNN and Long Short-Term Memory (LSTM) \cite{hochreiter1997longlstm} network. Next frame prediction using optical flow is also possible by using differentiable memory modules \cite{patraucean2015spatio}, one of our baselines, or by applying affine convolutional transformations on image parts \cite{finn2016unsupervised}. There are also approaches tailored to predict fluid flow. In a work that will be assessed in this project, it has been shown that calculating the optical flow with a CDNN and applying a Gaussian warping scheme to enforce smoothness it is possible to predict sea surface temperature \cite{bezenac2017deep}, a transport phenomena very similar to the wave propagation that we are studying.
+ Langragian approaches in computer vision are equivalent to frame prediction where the focus shifts from object interactions to capturing the dynamics behind image changes. Estimating the optical flow field is part of many methods and relies on the assumption that surfaces are continuous over time and so the intensity of a surface remains unchanged even if its position has shifted. Deep Learning models have been used for estimating the optical flow between two frames.  FlowNet, for example, uses an autoregressive Convolutional-Deconvolutional NN (CDNN) pretrained on synthetic data to make real video prediction \cite{fischer2015flownet} but optical flow can also be estimated in an unsupervised way \cite{jason2016back} using a CNN and Long Short-Term Memory (LSTM) \cite{hochreiter1997longlstm} network. Next frame prediction using optical flow is also possible by using differentiable memory modules \cite{patraucean2015spatio}, one of our baselines, or by applying affine convolutional transformations on image parts \cite{finn2016unsupervised}. There are also approaches tailored to predict physical phenomena. In a work that will be assessed in this project, it has been shown that calculating the optical flow with a CDNN and applying a Gaussian warping scheme to enforce smoothness it is possible to predict sea surface temperature \cite{bezenac2017deep}, a transport phenomena very similar to the wave propagation that we are studying.
 
-End-to-end next frame without a motion field is also possible. In a seminal work, Mathieu et al \cite{mathieu2015deep}, use an autoregressive CDNN along with a loss that ensures sharpness and trains it adversarially. Kalchbrenner et al. proposed a form of conditional autoencoder with CNN encoders, LSTM and PixelCNN predictors, producing state of the art results. Back to physical prediction, Convolutional LSTM modules have been used to predict snow precipitation and have since been extensively applied in other fields so that they are one of the models we will be assessing \cite{xingjian2015convolutionalconvlstm}. Predicting Langrangian object trajectories in height fields with CNN and RNN has also been explored \cite{ehrhardt2017learning}. Similarly, an approximate solution to wave propagation with autoencoders and LSTM has shown promising results \cite{sorteberg2018approximating} and due to its similarity to our problem is another of our baseline models.
+Frame prediction without a motion field is also possible. In their work, Mathieu et al. \cite{mathieu2015deep} use an autoregressive CDNN along with a loss that ensures sharpness and train it adversarially. Kalchbrenner et al. proposed a form of conditional autoencoder with CNN encoders, LSTM and PixelCNN predictors, producing state of the art results. With respect predicting physical systems, Convolutional LSTM \cite{xingjian2015convolutional} modules have been used to predict snow precipitation and have since been extensively applied in frame prediction being part of one the models that we will be assessing \cite{patraucean2015spatio}. Predicting Langrangian object trajectories in height fields with CNNs and RNNs has also been explored \cite{ehrhardt2017learning}. Similarly, an approximate solution to wave propagation with autoencoders and LSTM has shown promising results \cite{sorteberg2018approximating} and due to its similarity to our problem is another of our baseline models.
  
-Despite that Eulerian methods are out of the scope of this work they provide viable alternatives and can be considered for future work. In Eulerian methods during the projection step, the pressure field is calculated by solving the Poisson equation which is computationally expensive. Machine and deep learning techniques can replace numerical computations in the projection step to speed-up the simulation process. Farimani et al. \cite{farimani2017deep} have proposed using GANs conditioned on boundary conditions to infer solutions for steady flow in lid-driven cavity problems, Tompson et al \cite{tompson2017accelerating} use domain-specific CNNs motivated by the linear system structure to speed-up the pressure projection step while Thurey et al \cite{thuerey2018well} estimate both the pressure and velocity fields using a U-net shape architecture to improve flow prediction around an airfoil. The temporal evolution of the pressure field can also be modelled and used to create realistic animations of fluids \cite{wiewel2018latent}. Applications of Eulerian DL methods also extend to speeding-up Lattice Boltzmann Methods for compressible Euler equations by four orders of magnitude \cite{guo2016convolutional}, modelling turbulence for improved Reynolds stress closure \cite{ling2016reynolds} and inverse problems like shape optimization \cite{umetani2018learning}.
+Despite that Eulerian methods are out of scope, they provide viable alternatives and can be considered for future work. In Eulerian methods during the projection step, the pressure field is calculated by solving the Poisson equation which is computationally expensive. Machine and deep learning techniques can replace numerical computations in the projection step to speed-up the simulation process. Farimani et al. \cite{farimani2017deep} have proposed using GANs conditioned on boundary conditions to infer solutions for steady flow in lid-driven cavity problems, Tompson et al. \cite{tompson2017accelerating} use domain-specific CNNs motivated by the linear system structure to speed-up the pressure projection step while Thurey et al. \cite{thuerey2018well} estimate both the pressure and velocity fields using a U-net architecture to improve flow prediction around an airfoil. The temporal evolution of the pressure field can also be modelled and used to create realistic animations of fluids \cite{wiewel2018latent}. Applications of Eulerian DL methods also extend to speeding-up Lattice Boltzmann Methods for compressible Euler equations by four orders of magnitude \cite{guo2016convolutional}, modelling turbulence for improved Reynolds stress closure \cite{ling2016reynolds} and inverse problems like shape optimization \cite{umetani2018learning}.
 
 
 \section{Programme and Methodology}\label{sec:3methods}
 % \vskip -2mm
-\subsection{Baseline and proposed methods}
-\vskip -2mm
+% \vskip -2mm
 
-This project focuses on two categories of frame prediction methods, generic ones and methods specifically designed for fluid flow prediction. While both categories share similarities, methods specifically developed for fluid flow are expected to be more accurate in modeling the shallow water wave propagation that we study but also harder to transfer to other physical processes. Apart from studying this generalization-performance trade-off, we propose a new formulation of frame prediction based on the idea of energy conservation in order to target a wider spectrum of physical processes. Following we describe in detail the baselines and the proposed methods.
+This project focuses on two categories of frame prediction methods, generic ones and methods specifically designed for prediction of transport phenomena. While both categories share similarities, methods specifically developed for fluid flow are expected to be more accurate in modeling the shallow water wave propagation that we study but also harder to transfer to other physical processes. To further study this generalization-performance trade-off, we propose a new formulation for prediction based on the idea of energy conservation in order to target a wider spectrum of physical processes. Following we describe in detail the baselines, the proposed method, risks involved in developing the methods and also discuss some potential ethical issues.
 
-For generic video methods, there is a plethora to choose from and our selection is based on state-of-the-art accuracy, how easy they are to adapt and extend, the availability of open source code and the similarity of the original application to ours. We plan to implement the following methods:
-\begin{itemize}
-    \item The first baseline is a method that uses an autoregressive multiscale CDNN \cite{mathieu2015deep}. To overcome the blurriness inherent in these type of models when used with an $L_2$ loss, the authors propose to adversarially train the network adding a loss that preserves the sharpness. Adversarial methods are flexible in the sense that introducing a well-designed loss can have the desired results, an avenue we are willing to explore.
-    \item The second baseline follows a different approach, using a combination of two autoencoders one for the spatial and one for the temporal domains \cite{patraucean2015spatio}. The spatial encoder and decoders are based on convolutions. The temporal module uses a ConvLSTM \cite{xingjian2015convolutionalconvlstm} with an optical flow predictor based on Huber loss and a grid sampler that feeds the decoder. ConvLSTMs where originally uses in snow precipitation forecasting so this method is expected to work well in physical processes.
-\end{itemize}
+\subsection{Baselines}
+\label{sec:3baselines}
+For generic video methods, there is a plethora of methods to choose from and our selection is based on reported accuracy, their capacity to adapt and extend, the availability of open source code and the similarity of the original application to ours. Overal, we plan to implement the following baselines.
 
-We also consider two more baselines specialized in predicting fluid flow:
-\begin{itemize}
-    \item The third baseline is a method that draws many analogies to video prediction but also incorporates a physical prior and is used to predict sea surface temperatures  \cite{bezenac2017deep}. A CDNN estimates the motion field and then a warping scheme is applied. By assuming a Gaussian warping scheme the method induces a smoothness bias, present in many physical phenomena.
-    \item The last baseline is the most relevant one because it studies the wave propagation problem and has served as an inspiration for this project \cite{sorteberg2018approximating}. A visual autoencoder is employed to compress the input frames into a latent space, then an LSTM propagates this latent space into the future before it is decoded back to the spatial domain. 
-\end{itemize}
+% \begin{itemize}
+    % \item
+\textbf{Adversarially trained CDNN.} The first baseline is a state-of-the-art method that uses an autoregressive multiscale CDNN \cite{mathieu2015deep}. To overcome the blurriness inherent in these type of models when used with the $L_2$ loss, the authors propose to adversarially train the network adding a loss that preserves the sharpness. Adversarial methods are flexible in the sense that introducing a well-designed loss can have the desired results, an avenue we are willing to explore.
+% \item 
 
+
+\textbf{Spatial and temporal autoencoders (ConvLSTM).} The second baseline follows a different approach, using a combination of two autoencoders one for the spatial and one for the temporal domains \cite{patraucean2015spatio}. The spatial encoder and decoders are based on convolutions. The temporal module uses a ConvLSTM \cite{xingjian2015convolutional} with an optical flow predictor based on the Huber loss and a grid sampler that feeds the decoder. ConvLSTMs where originally uses in snow precipitation forecasting so this method is expected to work well in physical processes.
+
+We also consider two more baselines specialized in predicting transport phenomena:
+
+\textbf{Sea temperature prediction with CDNN and a physical prior.} The third baseline is a method that draws many analogies to video prediction but also incorporates a physical prior and is used to predict sea surface temperatures  \cite{bezenac2017deep}. A CDNN estimates the motion field and then a warping scheme is applied. By assuming a Gaussian warping scheme the method induces a smoothness bias, present in many physical phenomena. Given that the Green function for wave propagation might be different this leaves room for for exploring different warping schemes.
+
+\textbf{Wave propagation prediction with autoencoder and LSTM.} The last baseline is the most relevant one because it studies the wave propagation problem and has served as an inspiration for this project \cite{sorteberg2018approximating}. A visual autoencoder is employed to compress the input frames into a latent space, then an  propagate this latent space into the future before it is decoded back to the spatial domain. 
+
+\subsection{Proposed method}
+\label{sec:3proposed}
 Apart from the baselines, a novel methodology is also proposed, occupying a spot between generic video prediction and fluid-specific approaches. The aim is to come up with a formulation applicable to a variety of physical processes and not only wave propagation. Elementary principles like conservation of energy characterize every closed physical system hence inducing such a prior is a promising direction. Specifically, we draw inspiration by Hamiltonian mechanics, a mathematical formulation that predicts the trajectories of objects moving under Newtonian laws. Under the Hamiltonian formulation a system is described by the canonical coordinates $\mathbf{z} :=(\mathbf{q}, \mathbf{p})^{T}$ with $  \mathbf{q}, \mathbf{p} \in \mathbb{R}^{d}, \mathbf{z} \in \mathbb{R}^{2 d}$, where $\mathbf{q}$ and $\mathbf{p}$ correspond to the position and momentum of the objects respectively. Denoting the total energy of the system as $H(\mathbf{z})$, the equations of motion can be written in the compact form:
 
 \begin{center}
@@ -272,18 +291,33 @@ $\mathbf{J} :=\left[ \begin{array}{cc}{0} & {+\mathbf{I}_{d}} \\ {-\mathbf{I}_{d
 \end{center}
 \vskip -4pt
 
-where $\mathbf{J}$ is a canonical structure matrix but it can be generalized to be an arbitrary invertible constant skew-symmetric matrix \cite{leimkuhler_reich_2005hamiltonian}. Since $\mathbf{J}$ is skew-symmetric and invertible it can be factorized as $\mathbf{J} = \mathbf{A\Lambda A}^T$ and following some matrix calculus the Hamiltonian can be written as $\frac{d}{d t} \mathbf{z'}= \mathbf{\Lambda} \nabla_{\mathbf{z'}} H(\mathbf{z'})$ where $\mathbf{z'} = \mathbf{Az}$. We propose modeling this formulation with a symmetric deep CNN architecture where $\mathbf{\Lambda}$ plays the role of a bottleneck that corresponds to the energy conservation prior over local regions of the frame. 
-% The matrix $\mathbf{\Lambda}$ can be designed to be 
-A sketch graph of this architecture is given in Figure \ref{fig:arch}. Since the system is deterministic, if the Hamiltonian assumptions hold, the network will be able to encapsulate the dynamics and produce accurate long-term predictions.
+where $\mathbf{J}$ is a canonical structure matrix but it can be generalized to be an arbitrary invertible constant skew-symmetric matrix \cite{leimkuhler_reich_2005hamiltonian}. Since $\mathbf{J}$ is skew-symmetric and invertible it can be factorized as $\mathbf{J} = \mathbf{A\Lambda A}^T$ and following some matrix calculus the Hamiltonian can be written as $\frac{d}{d t} \mathbf{z'}= \mathbf{\Lambda} \nabla_{\mathbf{z'}} H(\mathbf{z'})$ where $\mathbf{z'} = \mathbf{Az}$. We propose modelling the process with a CDNN architecture where $\nabla_{\mathbf{z'}} H(\mathbf{z'})$ is conceptually encoded by the convolutional part,  the deconvolutions correspond to applying the derivatives of the canonical quantities $\frac{d}{d t} \mathbf{z'}$ to predict the future frame. The matrix $\mathbf{\Lambda}$ plays enforces energy conservation over local regions of the frame. Simply put, it encodes the dependencies between the canonical quantities $\mathbf{q}$ and $\mathbf{p}$ and can be designed to be block diagonal, a band matrix or some other appropriate form, while its size is also an important hyperparameter of the model. A sketch graph of this architecture is given in Figure \ref{fig:arch}. Since the system is deterministic, if the Hamiltonian assumptions hold and the design of  $\mathbf{\Lambda}$ is appropriate then the network will be able to encapsulate the dynamics and produce accurate long-term predictions.
 
 All methods will be trained in a supervised manner and the goal is to predict the next frame given a few previous frames. It has been shown that using the $L_2$ norm between the output and the ground truth does not produce good results \cite{mathieu2015deep} so we will be using the structural similarity metric (SSIM) which compares local statistics of image regions \cite{wang2004imagessim}.
 
+% \[
+% \begin{bmatrix}
+%     l_{11} & l_{12} & 0 & \dots  & 0 \\
+%     l_{21} & l_{22} & l_{23} & \dots  & 0 \\
+%     \vdots & \vdots & \vdots & \ddots & \vdots \\
+%     0 & 0 & 0 & \dots  & l_{nn}
+% \end{bmatrix}
+% \]
 
  \begin{figure}[tb]
-\vskip 5mm
+% \vskip 5mm
 \begin{center}
-\includesvg[width=0.5\columnwidth]{images/nn-2.svg}
-\caption{The proposed architecture inspired by the Hamiltonian formulation. A multi-frame input passes through a series of convolutional layers (here only 2 depicted). The column layers in the middle are connected through matrix $\mathbf{\Lambda}$, a bottleneck that encodes how energy is locally preserved. The transformed quantities are used to reconstruct the predicted future frame.}
+%   \setlength{\unitlength}{0.1\textwidth}
+\begin{picture}(320, 80)
+\put(0,0){\includesvg[width=0.7\columnwidth]{images/nn-2.svg}}
+\put(-70,50){Input frames}
+\put(70,100){$\nabla_{\mathbf{z'}} H(\mathbf{z'})$}
+\put(162,95){$\mathbf{\Lambda}$}
+\put(230,90){$\frac{d}{d t} \mathbf{z'}$}
+\put(330,30){Prediction}
+
+\end{picture}
+\caption{The proposed architecture inspired by the Hamiltonian formulation. A multi-frame input passes through a series of convolutional layers (here only 2 depicted) that conceptually encode the partial derivatives $\nabla_{\mathbf{z'}} H(\mathbf{z'})$. The column layers in the middle are connected through the matrix $\mathbf{\Lambda}$,  how energy is locally preserved. The transformed quantities, that correspond to the derivatives of the canonical coordinates $\frac{d}{d t} \mathbf{z'}$, are used to reconstruct the predicted future frame.}
 \label{fig:arch}
 \end{center}
 \vskip -5mm
@@ -297,10 +331,15 @@ All methods will be trained in a supervised manner and the goal is to predict th
  \vskip -2mm
 \subsection{Risk Assessment}
 \label{sec:3risk}
-\vskip -2mm
-As in any project there is some probability of things not going as planned and we have taken measures to mitigate such risks. Even though we chose our baseline carefully fully implementing and adapting them to our problem and infrastructure can be tricky. Our framework of choice is \textit{pytorch} so we chose baselines for which we have access to at least one implementation either in \textit{pytorch} or \textit{tensorflow} to make the initial development easier. Furthermore to make sure we will have a baseline that works reasonably well we plan to start with methods specific to fluids like \cite{sorteberg2018approximating} and then move to the rest. 
+% \vskip -2mm
+As in any project, it is possible some aspects will not go as planned and we have taken measures to mitigate such risks. Even though we chose our baseline carefully fully implementing and adapting them to our problem and infrastructure can be tricky. Our framework of choice is \textit{pytorch} so we chose baselines for which we have access to at least one implementation either in \textit{pytorch} or \textit{tensorflow} to make the initial development easier. Furthermore, to make sure we will have a baseline that works reasonably well we plan to start with methods specific to fluids like \cite{sorteberg2018approximating} and then move to the rest. 
 
- Iterating fast is important when implementing and verifying techniques. This is especially true the proposed method which is novel approach and will possibly require a lot of experiments and fine-tuning to accurately be assessed. During the feasibility study we will assess the training times to get an idea of how many experiments could realistically run it our time-span. If training times are too long we plan to make development iteration faster by using a smaller dataset and/or by reducing the input dimensions. Furthermore, if our proposed method fails to provide comparable performance we plan on thoroughly comparing the baselines and trying improvements and variations given time. Lastly, having noticed from other assignments that the GPU clustered is usually over-utilized close to deadlines we plan to start the experiments as soon as possible as have started the data-collection process already. 
+ Iterating fast is important when implementing and verifying techniques. This is especially true the proposed method which is a novel approach and will possibly require a lot of experiments and fine-tuning to accurately be assessed. During the feasibility study, we will assess the training times to get an idea of how many experiments could realistically run within our time constrains. If training times are too long we plan to make development iteration faster by using a smaller dataset and/or by reducing the input dimensions. Furthermore, we have deliberately chosen baselines that facilitate adaptations. If our proposed method fails to provide comparable performance we plan to try variations of our baselines as explained in Section \ref{sec:3baselines}. Lastly, having noticed from other assignments that the GPU clustered is usually over-utilized close to deadlines we plan to start the experiments as soon as possible and we have started the data-collection process already. 
+
+\vskip -2mm
+\subsection{Ethics}
+\label{sec:3ethics}
+During this research we follow the guidelines of the University of Edinburgh ethics policy and ensure that all sources are acknowledged. We are using synthetic datasets and planning to use open source code with the appropriate attribution. Even though solving the wave propagation problem does not raise any immediate ethical concerns, the approximate solutions  considered in this project should only be used when appropriate. To verify and test final designs of critical systems like aircrafts etc. it is important to use high-accuracy numerical solutions.
 
 % \begin{itemize}
 %     \item Detail the methodology to be used in pursuit of the research and justify this choice.
@@ -344,13 +383,18 @@ As in any project there is some probability of things not going as planned and w
 % \vskip -5mm
 % \end{figure}
 
-The methods discussed in Section \ref{sec:3methods} will be assessed on a artificial dataset that we will create using the Triflow simulator package \cite{CELLIER_2018triflow}. SSIM will be used as a metric to assess how good the prediction is relatively to the ground truth future frame. We would like to asses if the networks encapsulate an intrinsic physical understanding or just spatio-temporal correlations between the pixels. Here we explain a few directions that towards this goal. Long term prediction is very important, the methods will be evaluated not only on the next frame but also in subsequent ones by recursively feeding the prediction back to the network. A model should also be invariant to boundary conditions. We will try two different boundary conditions such as mirror, where waves cross from one side of the frame to the other, and solid, where the waves reflect back at the boundaries as seen in Figure \ref{fig:boundary}. Furthermore, changing the dynamics, like the depth of the water or the angle of the illumination, produces qualitatively different patterns and our models will be assessed upon how well they can generalize in those situations. The generalizations capabilities can also be determined on totally different physical prediction problems like for example a double swinging pendulum etc. Lastly, since our focus is on fast approximations, training time and speed of inference are also important evaluation metrics.
+The methods discussed in Section \ref{sec:3methods} will be assessed on an artificial dataset that we will create using the Triflow simulator package \cite{CELLIER_2018triflow}. SSIM will be used as a metric to assess how good the prediction is relative to the ground truth future frame. We would like to assess if the networks encapsulate an intrinsic physical understanding or just spatiotemporal correlations between the pixels. Here we explain a few directions towards this goal. Long term prediction is very important, the methods will be evaluated not only on the next frame but also in subsequent ones by recursively feeding the prediction back to the network. A model should also be invariant to boundary conditions. We will try two different boundary conditions: \textit{mirror boundary}, where waves cross from one side of the frame to the other, and \textit{solid boundary}, where the waves reflect back at the boundaries as seen in Figure \ref{fig:boundary} (a) and (b) respectively. Additionally, changing the dynamics, like the depth of the water or the angle of the illumination, produces qualitatively different patterns and our models will be assessed upon how well they can generalize in those situations. The generalizations capabilities can also be determined on totally different physical prediction problems like for example a double swinging pendulum. Lastly, since our focus is on fast approximations, the time it takes to train each network along with the speed of prediction at test time are important evaluation metrics.
+
+\vskip -10mm
 
 \section{Expected Outcomes}\label{sec:5outcomes}
 
-How much prior physical knowledge does machine learning require to predict physicall systems well? What is the best way to incorporate it? This project will provide a comprehensive study on DL methods for fluid flow. We aim to shed light on the trade-offs between generic frame methods and those specifically designed to estimates fluid flow. Furthermore, we propose a new method that stands somewhere in between by focusing on physical systems in general and hope that this new method will provide another option in the wide spectrum of possibilities and better inform future research in the area.
+How much prior physical knowledge does machine learning require to predict physical systems well? What is the best way to incorporate it? This project will provide a comprehensive study of DL methods assessed on the wave propagation problem. We aim to shed light on the trade-offs between generic frame prediction methods and those specifically designed to estimates transport phenomena. Furthermore, we propose a new method that stands somewhere in between by targeting physical processes in general, hoping that this new method will provide another option in the wide spectrum of possibilities and better inform future research in the area.
+
+% \textcolor{red}{How much prior physical knowledge does machine learning require to predict physical systems well? What is the best way to incorporate it? This project will provide a comprehensive study of DL methods for fluid flow. We aim to shed light on the trade-offs between generic frame methods and those specifically designed to estimates fluid flow. Furthermore, we propose a new method that stands somewhere in between by focusing on physical systems in general and hope that this new method will provide another option in the wide spectrum of possibilities and better inform future research in the area.How much prior physical knowledge does machine learning require to predict physical systems well? What is the best way to incorporate it? This project will provide a comprehensive study of DL methods for fluid flow. We aim to shed light on the trade-offs between generic frame methods and those specifically designed to estimates fluid flow.}
 
 \section{Research Plan, Milestones and Deliverables}\label{sec:6plan}
+\vskip -10mm
 
 \definecolor{barblue}{RGB}{153,204,254}
 \definecolor{groupblue}{RGB}{51,102,254}
@@ -445,7 +489,9 @@ How much prior physical knowledge does machine learning require to predict physi
 %                This is plain and unsorted, so in the order
 %                they appear in the document.
 
-{\small
+{
+% \small
+\footnotesize
 \bibliography{main}       % bib file(s).
 }
 \end{document}
